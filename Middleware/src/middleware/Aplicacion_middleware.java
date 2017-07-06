@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.ClientInfoStatus;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.Timer;
 
 /**
@@ -50,15 +52,32 @@ public class Aplicacion_middleware {
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 String inputLine, outputLine;
+                String informacion;
+                contador = 0;
+                outputLine = "Ingrese el usuario";
+                out.println(outputLine);
                 while ((inputLine = in.readLine()) != null) {
-                    for (int i = 0; i < users.size(); i++) {
-                        if (!users.get(i).equals(clientSocket.getRemoteSocketAddress().toString())) {
-                            users.add(clientSocket.getRemoteSocketAddress().toString());
-                        }
-                    }
-                    Thread.sleep(1000);
-                    System.out.println(inputLine);
-                    System.out.println(users.toString());
+                     if(contador == 1){
+                    	 outputLine = "Ingrese la contrasena";
+                     }
+                     else if(contador ==2){
+                    	 outputLine = "Ingrese el mensaje;"
+                     }
+                    contador++;
+                    out.println(outputLine);
+                    
+                    informacion += in.readLine()+"\t";
+                }
+                long inicio =  System.currentTimeMillis();
+                Thread.sleep(1000);
+                long fin =  System.currentTimeMillis(); 
+                int tiempo = (inicio - fin)/1000;
+                if(tiempo >1){
+                	for (int i = 0; i < users.size(); i++) {
+						if(users.get(i).equals(clientSocket.getInetAddress().getHostAddress())){
+							users.remove(i);
+						}
+					}
                 }
 
             }
